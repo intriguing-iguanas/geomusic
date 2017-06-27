@@ -3,8 +3,6 @@
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var bodyParser = require('body-parser');
-var spotifyHelper = require('./spotifyHelper.js');
-var Spotify = require('spotify-web-api-js');
 var app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
@@ -39,13 +37,21 @@ app.listen(port, function() {
 
 // module.exports = app;
 
-
-
 /// =========================== SPOTIFY DEPENDENCIES ======================
 
 var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var spotifyHelper = require('./spotifyHelper.js');
+
+app.get('/spotify', function(req, res) {
+  var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
+  // for development only: not for deployment
+  var secret = require('../secret.js');
+  var access_token = process.env.ACCESS_TOKEN || secret.TEMP_TOKEN;
+  spotifyHelper.getAllPlayList(user_id, access_token);
+  res.status(200).end();
+})
 
 /// =========================== SPOTIFY app helper =============================
 /*
@@ -65,9 +71,8 @@ var cookieParser = require('cookie-parser');
 //  =========================== API secrets  ===========================
 
 // FIXME: refactor to dynamically change according to local/testing/staging/production
-
-// // for development only: not for deployment
-// var secret = require('../secret.js');
+// for development only: not for deployment
+var secret = require('../secret.js');
 
 // setup the url for the Heroku or for the development
 var env = process.env.NODE_ENV || 'local';
@@ -233,9 +238,3 @@ request.post(authOptions, function(error, response, body) {
     });
   }
 });
-
-/// =========================== add to DB =============================
-
-// app.post('/add', function(req, res) {
-//
-// })
