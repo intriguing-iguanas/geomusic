@@ -1,15 +1,16 @@
-/// ===================== BOILER PLATE DEPENDENCIES ===================
-
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
+var express = require('express');
+var request = require('request');
 var bodyParser = require('body-parser');
-var spotifyHelper = require('./spotifyHelper.js');
-var Spotify = require('spotify-web-api-js');
+var querystring = require('querystring');
+var cookieParser = require('cookie-parser');
 var app = express();
+
+// // for development only: not for deployment
+// var secret = require('../secret.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
-/// ===================== BOILER PLATE DB ROUTE =========================
+/// ===================== DB ROUTE =========================
 
 var pins = require('../database');
 
@@ -29,25 +30,15 @@ app.get('/pins', function (req, res) {
 var port = process.env.PORT || 3000;
 
 // Heroku requires the root route though express offers the route without definition
-app.get('/', function (req, res) {
-  res.status(200).sendFile('index.html');
-})
+// app.get('/', function (req, res) {
+//   res.status(200).sendFile('index.html');
+// })
 
 app.listen(port, function() {
   console.log('Listening on port ' + port);
 });
 
-// module.exports = app;
-
-
-
-/// =========================== SPOTIFY DEPENDENCIES ======================
-
-var request = require('request'); // "Request" library
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
-
-/// =========================== SPOTIFY app helper =============================
+/// =========================== SPOTIFY ======================
 /*
  * This is a node.js script that performs the Authorization Code oAuth2
  * flow to authenticate against the Spotify Accounts.
@@ -56,34 +47,27 @@ var cookieParser = require('cookie-parser');
  *
  * module.exports.CLIENT_ID='your client ID';
  * module.exports.CLIENT_SECRET='your client secret';
- * module.exports.REDIRECT_URI=
- * 'http://localhost:3000/callback/'
- * https://geo-music.herokuapp.com/
  * and make sure you add the http://localhost:3000/callback/ to your white list
  * in spotify
 */
-//  =========================== API secrets  ===========================
 
 // FIXME: refactor to dynamically change according to local/testing/staging/production
-
-// // for development only: not for deployment
-// var secret = require('../secret.js');
-
 // setup the url for the Heroku or for the development
+// choose between env variables for Heroku or dev env
 var env = process.env.NODE_ENV || 'local';
 var redirect_uri = env === 'local' ? 'http://localhost:3000/callback/' : 'https://geo-music-staging.herokuapp.com/callback/';
-
-// choose between env variables for Heroku or dev env
 var client_id = process.env.CLIENT_ID || secret.CLIENT_ID; // Your client id
 var client_secret = process.env.CLIENT_SECRET || secret.CLIENT_SECRET; // Your secret
 
-//  ========================================================================
 
-/**
+/* SPOTIFY APP HELPER
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
+
+
+// generate random string for key
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -94,10 +78,12 @@ var generateRandomString = function(length) {
   return text;
 };
 
+
+// generate stateKye, 16 digit login string 
 var stateKey = 'spotify_auth_state';
 
-app.use(express.static(__dirname + '/public'))
-   .use(cookieParser());
+// app.use(express.static(__dirname + '/public'))
+//    .use(cookieParser());
 
 app.get('/login', function(req, res) {
 
@@ -115,6 +101,7 @@ app.get('/login', function(req, res) {
       state: state
     }));
 });
+
 
 app.get('/callback', function(req, res) {
 
@@ -202,40 +189,89 @@ app.get('/refresh_token', function(req, res) {
 });
 
 
-/// =========================== SPOTIFY credential helper =============================
+/// =================== SPOTIFY credential helper =========================
 
-// your application requests authorization
-var authOptions = {
-  url: 'https://accounts.spotify.com/api/token',
-  headers: {
-    'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-  },
-  form: {
-    grant_type: 'client_credentials'
-  },
-  json: true
+var getUserData = (client_id, client_secret) => {
+  // your application requests authorization
+  var authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+    },
+    form: {
+      grant_type: 'client_credentials'
+    },
+    json: true
+  };
+
+  request.post(authOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+
+      // use the access token to access the Spotify Web API
+      var token = body.access_token;
+      var options = {
+        url: 'https://api.spotify.com/v1/users/jmperezperez',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        json: true
+      };
+      request.get(options, function(error, response, body) {
+        console.log(body);
+      });
+    }
+  });
 };
 
-request.post(authOptions, function(error, response, body) {
-  if (!error && response.statusCode === 200) {
 
-    // use the access token to access the Spotify Web API
-    var token = body.access_token;
-    var options = {
-      url: 'https://api.spotify.com/v1/users/jmperezperez',
+// =================== SPOTIFY Data Retrieval =========================
+// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+
+var TEMP_TOKEN = process.env.TEMP_TOKEN || 'BQBGeQJukOKtrYT2mjqcoKBHzP1sLorM8igFy0ldFIOQFD2h63xb4mEfs8iLj9T8QOwXJc2C9NGNX4qCuzXrmKdqvxKzOAKwbzCcByvKF-GHWb0D7fxARHkbF6dvpcpR6tlH8xkaxBUH4xXSL65A3Yyd_s7ry2BngTLX'
+var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
+
+var getAllPlayList = (client_id, access_token) => {
+
+  return new Promise((resolve, reject) => {
+
+    const options = {
+      url: `https://api.spotify.com/v1/users/${user_id}/playlists`,
+      method: 'GET',
       headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      json: true
+        Authorization: 'Bearer ' + TEMP_TOKEN
+      }
     };
-    request.get(options, function(error, response, body) {
-      // console.log(body);
+
+    request(options, function(err, res, body) {
+      if (err) {
+        reject(err);
+      } else {
+        let json = JSON.stringify(body);
+        resolve(json);
+      }
     });
-  }
-});
 
-/// =========================== add to DB =============================
+  })
+};
 
-// app.post('/add', function(req, res) {
-//
-// })
+app.post('/spotify', function(req, res) {
+
+  var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
+  var access_token = process.env.ACCESS_TOKEN || secret.TEMP_TOKEN;
+
+  getAllPlayList(user_id, access_token)
+  .then((response) => {
+
+    console.log(response);
+    res.status(200).send('OK');
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).send('NOT OK');
+  });
+})
+
+
+module.exports.getAllPlayList = getAllPlayList;
+module.exports = app;
+
