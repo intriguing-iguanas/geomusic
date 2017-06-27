@@ -30,9 +30,9 @@ app.get('/pins', function (req, res) {
 var port = process.env.PORT || 3000;
 
 // Heroku requires the root route though express offers the route without definition
-app.get('/', function (req, res) {
-  res.status(200).sendFile('index.html');
-})
+// app.get('/', function (req, res) {
+//   res.status(200).sendFile('index.html');
+// })
 
 app.listen(port, function() {
   console.log('Listening on port ' + port);
