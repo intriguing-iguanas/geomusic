@@ -1,9 +1,36 @@
 <!doctype html>
-<html>
+<html class="no-js">
   <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>GeoMusic</title>
-    
+
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
+  
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="/lib/Elate/css/animate.css">
+    <!-- Icomoon Icon Fonts-->
+    <link rel="stylesheet" href="/lib/Elate/css/icomoon.css">
+    <!-- Simple Line Icons -->
+    <link rel="stylesheet" href="/lib/Elate/css/simple-line-icons.css">
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" href="/lib/Elate/css/magnific-popup.css">
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" href="/lib/Elate/css/bootstrap.css">
+
+    <link rel="stylesheet" href="/lib/Elate/css/style.css">
+
+    <!-- Styleswitcher ( This style is for demo purposes only, you may delete this anytime. ) -->
+    <link rel="stylesheet" id="theme-switch" href="/lib/Elate/css/style.css">
+    <!-- End demo purposes only -->
+
+    <!-- Modernizr JS -->
+    <script src="/lib/Elate/js/modernizr-2.6.2.min.js"></script>
+
     <style type="text/css">
       #login, #loggedin {
         display: none;
@@ -20,29 +47,62 @@
         width: 100%;
       }
     </style>
+
+
   </head>
 
   <body>
-    <div class="container">
-      <div id="login">
-        <h1>Heroku Login with Google Map</h1>
-        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
-      </div>
-      <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
-      </div>
-    </div>
+    <header role="banner" id="fh5co-header">
+      <div class="container">
 
-   
-   <!-- in order for the react components to work the following two lines have been added 
-   and the map div has been commented out -->
-   <div id="app"></div>
-   <script type="text/javascript" src="bundle.js"></script>
-   <!-- <div id="map"></div> -->
+        <nav class="navbar navbar-default">
+          <div class="navbar-header">
+            <!-- Mobile Toggle Menu Button -->
+        <a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><i></i></a>
+           <a class="navbar-brand" href="index.html">GeoMusic</a> 
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+
+            
+              <li class="active"><a href="#" data-nav-section="home"><span>Home</span></a></li>
+              <li><a href="#" data-nav-section="work"><span>Work</span></a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+
+    <section id="fh5co-home" data-section="home" data-stellar-background-ratio="0.5">
+      <div class="gradient"></div>
+      <div class="container">
+        <div class="text-wrap">
+          <div class="text-inner">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <div id="login">
+                  <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+                </div>
+
+                <div id="loggedin">
+                  <div id="user-profile"></div>
+                  <div id="oauth"></div>
+                  <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+                </div>
+                
+               <!-- in order for the react components to work the following two lines have been added 
+               and the map div has been commented out -->
+               <div id="app"></div>
+               <script type="text/javascript" src="bundle.js"></script>
+                <!-- <div id="map" class="to-animate"></div> -->
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Spotify Login -->
 
@@ -208,6 +268,63 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3KHDKK_9Fniw2mrRcLLRl_QhawXHvC0s&callback=initMap">
     </script>
 
+    <footer id="footer" role="contentinfo">
+      <div class="container">
+        <div class="">
+          <div class="col-md-12 text-center">
+            <p>&copy; GeoMusic Free HTML5. All Rights Reserved. </p>        
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <ul class="social social-circle">
+              <li><a href="#"><i class="icon-twitter"></i></a></li>
+              <li><a href="#"><i class="icon-facebook"></i></a></li>
+              <li><a href="#"><i class="icon-youtube"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- jQuery -->
+    <script src="../lib/Elate/js/jquery.min.js"></script>
+    <!-- jQuery Easing -->
+    <script src="../lib/Elate/js/jquery.easing.1.3.js"></script>
+    <!-- Bootstrap -->
+    <script src="../lib/Elate/js/bootstrap.min.js"></script>
+    <!-- Waypoints -->
+    <script src="../lib/Elate/js/jquery.waypoints.min.js"></script>
+    <!-- Stellar Parallax -->
+    <script src="../lib/Elate/js/jquery.stellar.min.js"></script>
+    <!-- Magnific Popup -->
+    <script src="../lib/Elate/js/jquery.magnific-popup.min.js"></script>
+    <script src="../lib/Elate/js/magnific-popup-options.js"></script>
+    <!-- Google Map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCefOgb1ZWqYtj7raVSmN4PL2WkTrc-KyA&sensor=false"></script>
+    <script src="../lib/Elate/js/google_map.js"></script>
+
+    <!-- For demo purposes only styleswitcher ( You may delete this anytime ) -->
+    <script src="../lib/Elate/js/jquery.style.switcher.js"></script>
+    <script>
+      $(function(){
+        $('#colour-variations ul').styleSwitcher({
+          defaultThemeId: 'theme-switch',
+          hasPreview: false,
+          cookie: {
+                  expires: 30,
+                  isManagingLoad: true
+              }
+        }); 
+        $('.option-toggle').click(function() {
+          $('#colour-variations').toggleClass('sleep');
+        });
+      });
+    </script>
+    <!-- End demo purposes only -->
+
+    <!-- Main JS (Do not remove) -->
+    <script src="../lib/Elate/js/main.js"></script>
 
 
   </body>
