@@ -1,11 +1,8 @@
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
-<<<<<<< HEAD
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-=======
->>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
 var app = express();
 
 // // for development only: not for deployment
@@ -64,13 +61,10 @@ app.listen(port, function() {
 */
 
 // FIXME: refactor to dynamically change according to local/testing/staging/production
-<<<<<<< HEAD
-=======
 
 // for development only: not for deployment
 // var secret = require('../secret.js');
 
->>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
 // setup the url for the Heroku or for the development
 // choose between env variables for Heroku or dev env
 var env = process.env.NODE_ENV || 'local';
@@ -270,8 +264,6 @@ var getAllPlayList = (client_id, access_token) => {
       }
     });
 
-<<<<<<< HEAD
-=======
 // =================== SPOTIFY Data Retrieval =========================
 // GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 
@@ -299,7 +291,6 @@ var getAllPlayList = (client_id, access_token) => {
       }
     });
 
->>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
   })
 };
 
@@ -320,13 +311,6 @@ app.post('/spotify', function(req, res) {
   });
 })
 
-<<<<<<< HEAD
 
 module.exports.getAllPlayList = getAllPlayList;
 module.exports = app;
-
-=======
-
-module.exports.getAllPlayList = getAllPlayList;
-module.exports = app;
->>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
