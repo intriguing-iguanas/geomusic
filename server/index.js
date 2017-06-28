@@ -63,7 +63,7 @@ app.listen(port, function() {
 // FIXME: refactor to dynamically change according to local/testing/staging/production
 
 // for development only: not for deployment
-// var secret = require('../secret.js');
+var secret = require('../secret.js');
 
 // setup the url for the Heroku or for the development
 // choose between env variables for Heroku or dev env
@@ -236,7 +236,6 @@ var getUserData = (client_id, client_secret) => {
   });
 };
 
-
 // =================== SPOTIFY Data Retrieval =========================
 // GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 
@@ -263,6 +262,8 @@ var getAllPlayList = (client_id, access_token) => {
         resolve(json);
       }
     });
+  });
+};
 
 // =================== SPOTIFY Data Retrieval =========================
 // GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
@@ -291,7 +292,7 @@ var getAllPlayList = (client_id, access_token) => {
       }
     });
 
-  })
+  });
 };
 
 app.post('/spotify', function(req, res) {
@@ -309,7 +310,7 @@ app.post('/spotify', function(req, res) {
     console.log(err);
     res.status(500).send('NOT OK');
   });
-})
+});
 
 
 module.exports.getAllPlayList = getAllPlayList;
