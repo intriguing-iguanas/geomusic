@@ -1,8 +1,11 @@
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
+<<<<<<< HEAD
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+=======
+>>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
 var app = express();
 
 // // for development only: not for deployment
@@ -12,7 +15,7 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 /// ===================== DB ROUTE =========================
 
-var pins = require('../database');
+var Pin = require('../database').pin;
 
 app.get('/pins', function (req, res) {
   pins.selectAll(function(err, data) {
@@ -23,6 +26,15 @@ app.get('/pins', function (req, res) {
     }
   });
 });
+
+// req.body has to come in the format: { location: { type: 'Point', coordinates: [-122.408942, 37.783696] }, playlist: 'https://api.spotify.com/v1/users/wizzler/playlists?offset=0&limit=20' }
+app.post('/add', function(req, res) {
+  Pin.create(req.body, function(err) {
+    if (err) {
+      console.error(err);
+    }
+  })
+})
 
 /// =========================== SERVER RUN =============================
 
@@ -52,6 +64,13 @@ app.listen(port, function() {
 */
 
 // FIXME: refactor to dynamically change according to local/testing/staging/production
+<<<<<<< HEAD
+=======
+
+// for development only: not for deployment
+// var secret = require('../secret.js');
+
+>>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
 // setup the url for the Heroku or for the development
 // choose between env variables for Heroku or dev env
 var env = process.env.NODE_ENV || 'local';
@@ -251,6 +270,36 @@ var getAllPlayList = (client_id, access_token) => {
       }
     });
 
+<<<<<<< HEAD
+=======
+// =================== SPOTIFY Data Retrieval =========================
+// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+
+var TEMP_TOKEN = process.env.TEMP_TOKEN || 'BQBwQI8mY95ghLeDiUgnPwC9Af5iclwnqGmwIy5cc0z_uU3R3bFDsMUsBAkkCmJI5MqYhIn6e671nWEK6lyafld-R_e2wzeBVnTjQClLwZX4vA8vI5mT69mJ2x7Xu-VtJqlQZsQIt3kgTynJuT1yt5U0lO94SvZtMm91&refresh_token=AQA2AK3eXG5jaM2VHb9pOBoBx8pkwy0UFpgVaXZAG9qX7EIwYHkscQrqumX8U5_dEyckPBgBbLYAZRYr8QUSG0Vf524-nFET8s-lKENMRy27h8LvutSjhRC2WVi7lgg1e4w'
+var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
+
+var getAllPlayList = (client_id, access_token) => {
+
+  return new Promise((resolve, reject) => {
+
+    const options = {
+      url: `https://api.spotify.com/v1/users/${user_id}/playlists`,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + TEMP_TOKEN
+      }
+    };
+
+    request(options, function(err, res, body) {
+      if (err) {
+        reject(err);
+      } else {
+        let json = JSON.stringify(body);
+        resolve(json);
+      }
+    });
+
+>>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
   })
 };
 
@@ -271,7 +320,13 @@ app.post('/spotify', function(req, res) {
   });
 })
 
+<<<<<<< HEAD
 
 module.exports.getAllPlayList = getAllPlayList;
 module.exports = app;
 
+=======
+
+module.exports.getAllPlayList = getAllPlayList;
+module.exports = app;
+>>>>>>> f399b96d96e20d26d557c2ba13aa1c33535e7234
