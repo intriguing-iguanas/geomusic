@@ -5,8 +5,8 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var app = express();
 
-// // for development only: not for deployment
-// var secret = require('../secret.js');
+// for development only: not for deployment
+var secret = require('../secret.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
