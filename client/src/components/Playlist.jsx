@@ -40,7 +40,7 @@ class Playlist extends React.Component {
 
     return (
     <div>
-      <h4> Playlist </h4>
+      <h2 id="fh5co-testimonials"> Select Playlist </h2>
       <div>
       { dummyPlaylist.map(item => <PlaylistItem item={item} songSelected={this.props.songSelected} />)}
       </div>
