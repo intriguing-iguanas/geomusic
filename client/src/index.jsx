@@ -60,13 +60,8 @@ class App extends React.Component {
     if (!this.state.loggedIn) {
       display = <Login />
     } else if (this.state.showPlaylist) {
-<<<<<<< HEAD
       display = <div>
                   <Playlist items={this.state.items} songSelected={this.songSelected} />
-=======
-      display = <div className="container">
-                  <Playlist songSelected={this.songSelected} />
->>>>>>> 0428ef9dfad98df00b8ba3fce033d02005e41897
                 </div>
     } else {
       display = <div>
