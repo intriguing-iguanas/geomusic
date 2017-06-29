@@ -22,6 +22,11 @@ coverage
 
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
+<<<<<<< HEAD
+=======
+dist/
+database/
+>>>>>>> soo-park-master
 
 # Dependency directorys
 # Deployed apps should consider commenting these lines out:
