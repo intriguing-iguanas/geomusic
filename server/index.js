@@ -65,7 +65,7 @@ app.listen(port, function() {
 // FIXME: refactor to dynamically change according to local/testing/staging/production
 
 // for development only: not for deployment
-// var secret = require('../secret.js');
+var secret = require('../secret.js');
 
 // setup the url for the Heroku or for the development
 // choose between env variables for Heroku or dev env
