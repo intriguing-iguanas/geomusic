@@ -66,6 +66,7 @@ var getPinsWithinRadius = function(lng, lat) {
     }
   })
 }
+
 // getPinsWithinRadius(-122.407087, 37.783506);
 
 // create a new db pin for test:
