@@ -9,8 +9,7 @@
   },
   "scripts": {
     "react-dev": "webpack -d --watch",
-    "server-dev": "nodemon server/index.js",
-    "db-start": "mongod --dbpath ./database/data/db"
+    "server-dev": "nodemon server/index.js"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -18,7 +17,8 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.15.3",
     "jquery": "^3.2.1",
-    "mongoose": "^4.10.7",
+    "mongoose": "^4.10.8",
+    "path": "^0.12.7",
     "querystring": "^0.2.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
