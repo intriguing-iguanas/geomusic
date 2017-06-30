@@ -9,7 +9,7 @@ module.exports = (app, express) => {
   app.use(cookieParser());
 
   // Heroku requires the root route though express offers the route without definition
-  app.get('/', function (req, res) {
-    res.status(200).sendFile('index.html');
-  })
+  // app.get('/', function (req, res) {
+  //   res.status(200).sendFile('index.html');
+  // })
 }
