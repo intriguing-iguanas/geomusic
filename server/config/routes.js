@@ -4,7 +4,7 @@ var db = require('../../database/collections/pin.js');
 var Pin = db.pin;
 
 // Comment out before committing, only for development
-var secret = require('../../secret.js');
+// var secret = require('../../secret.js');
 
 module.exports = (app) => {
   app.get('/sendClosestPlaylist', function (req, res) {
