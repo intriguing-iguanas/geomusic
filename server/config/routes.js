@@ -7,6 +7,12 @@ var Pin = db.pin;
 // var secret = require('../../secret.js');
 
 module.exports = (app) => {
+
+  // Heroku requires the root route though express offers the route without definition
+  app.get('/', function (req, res) {
+    res.status(200).sendFile('index.html');
+  })
+
   app.get('/sendClosestPlaylist', function (req, res) {
     var params = req.url.slice(21).split('=');
     var lng = JSON.parse(params[0]);
