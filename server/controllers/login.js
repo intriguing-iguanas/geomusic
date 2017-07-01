@@ -2,9 +2,9 @@ var generateRandomString = require('../helpers/generateRandomString');
 
 module.exports = function(req, res) {
 
+  // var secret = require('../../secret.js')// for development only: not for deployment
   var querystring = require('querystring');
   var cookieParser = require('cookie-parser');
-  var secret = require('../../secret.js')// for development only: not for deployment
   var env = process.env.NODE_ENV || 'local';
   var redirect_uri = env === 'local' ? 'http://localhost:3000/callback/' : 'https://geo-music-staging.herokuapp.com/callback/';
   var client_id = process.env.CLIENT_ID || secret.CLIENT_ID;
