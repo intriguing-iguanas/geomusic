@@ -98,7 +98,6 @@ class App extends React.Component {
 
   render () {
     var display = null;
-
     // if (!this.state.loggedIn) {
     //   display = <Login />
     // } else
@@ -107,7 +106,7 @@ class App extends React.Component {
                   <Playlist getCurrentLocation={this.getCurrentLocation} addtoDB={this.addtoDB} />
                 </div>
     } else {
-      display = <div>
+      display = <div className="container">
                   <Map />
                   <br></br>
                     <div className="btn-group" role="group">
