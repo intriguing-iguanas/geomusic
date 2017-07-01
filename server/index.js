@@ -4,7 +4,7 @@ var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var bodyParser = require('body-parser');
 var db = require('../database');
-// var secret = require('../secret.js')// for development only: not for deployment
+var secret = require('../secret.js')// for development only: not for deployment
 var app = express();
 
 app.use(bodyParser.json());
@@ -28,47 +28,12 @@ app.get('/pins', function (req, res) {
 // play button get request for playlist in current location
 
 var db = require('../database');
+
 // req.body has to have current location of a user
-app.get('/sendClosestPlaylist', function (req, res) {
-  // console.log('params', params);
-  var params = req.url.slice(21).split('=');
-  var lng = JSON.parse(params[0]);
-  var lat = JSON.parse(params[1]);
-
-  db.getPinsWithinRadius(lng, lat, function(err, data){
-    var closestPin = [];
-
-    for (var k = 0; k < data.length; k++ ) {
-      // find nearest pin
-      var a = Math.abs(lng - data[k].location.coordinates[0]);
-      var b = Math.abs(lat - data[k].location.coordinates[1]);
-      var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-      closestPin.push(c);
-    }
-      var min = Math.min.apply(Math, closestPin);
-      var index = closestPin.indexOf(min);
-// console.log('data in /sendClosestPlaylist:', data);
-      // send playlist back to client
-      res.send(data[index].playlistUrl);
-  })
-});
+app.get('/sendClosestPlaylist', require('./controllers/sendClosestPlaylist'));
 
 // add new pin to DB
-app.post('/newpin', function(req, res) {
- var pinData = {
-   location: { type: 'Point', coordinates: [ Number(req.body.location.coordinates[0]), Number(req.body.location.coordinates[1]) ] },
-   playlistUrl: req.body.playlistUrl,
-   playlistName: req.body.playlistName
- }
-  // var parsedBody = JSON.parse(req.body);
-  Pin.create(pinData, function(err) {
-    if (err) {
-      console.error(err);
-    } else {
-      res.end();
-    }
-  })
-})
+app.post('/newpin', require('./controllers/newpin'))
 
 /// =========================== SERVER RUN =============================
 
@@ -97,48 +62,23 @@ var env = process.env.NODE_ENV || 'local';
 var redirect_uri = env === 'local' ? 'http://localhost:3000/callback/' : 'https://geo-music-staging.herokuapp.com/callback/';
 
 // choose between env variables for Heroku or dev env
-var client_id = process.env.CLIENT_ID || secret.CLIENT_ID; // Your client id
-var client_secret = process.env.CLIENT_SECRET || secret.CLIENT_SECRET; // Your secret
+var user_id = process.env.CLIENT_ID || 'greenfield8080';
+var client_id = process.env.CLIENT_ID || secret.CLIENT_ID;
+var client_secret = process.env.CLIENT_SECRET || secret.CLIENT_SECRET;
 
 //  ========================================================================
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
-var generateRandomString = function(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  // use the random string to set state of the auth
+  var stateKey = 'spotify_auth_state';
 
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-
-var stateKey = 'spotify_auth_state';
-
-app.use(express.static(__dirname + '/public'))
+// use the client folder with the cookie parser for cookies needed
+app.use(express.static(__dirname + '/client/dist'))
    .use(cookieParser());
 
-app.get('/login', function(req, res) {
+// login route
+app.get('/login', require('./controllers/login'));
 
-  var state = generateRandomString(16);
-  res.cookie(stateKey, state);
-
-  // your application requests authorization
-  var scope = 'user-read-private user-read-email';
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    }));
-});
-
+// login route redirects to this callback route. this route genetates tokens
 app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
@@ -148,13 +88,20 @@ app.get('/callback', function(req, res) {
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
+  // checks with state to see if the browser that pressed the login button is accessing
   if (state === null || state !== storedState) {
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
       }));
   } else {
+    
+    // if state matched, enter the token acquire process
+
+    // clear cookie so that later user of the browser will have to get another state
     res.clearCookie(stateKey);
+
+    // get token with client id and secret
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -181,7 +128,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          // console.log(body);
+          console.log("these are the tokens", access_token, refresh_token);
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -200,6 +147,7 @@ app.get('/callback', function(req, res) {
   }
 });
 
+// token refresh. necessary when having another request
 app.get('/refresh_token', function(req, res) {
 
   // requesting access token from refresh token
@@ -261,36 +209,20 @@ request.post(authOptions, function(error, response, body) {
 // =================== SPOTIFY Data Retrieval =========================
 // GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 
-app.get('/getAccessToken', function(req, res) {
-  //'Authorization': 'Basic ZjQ5ZjY0OWYyMTQwNDY5NjkzY2ZjOTU2ZWU0ZWRlOGQ=:ZDg1ZTI2ZWFjODk2NDYzOGFjMjE2N2FiOGUwN2FhMjE='
+app.get('/getAccessToken', require('./controllers/getAccessToken.js'))
 
-  var authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    headers: {
-      'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-    },
-    form: {
-      grant_type: 'client_credentials'
-    },
-    json: true
-  };
+var TOKEN = process.env.TEMP_TOKEN || 'BQAyzDFCIgqYWimLvlfIZBlgeoJEK0ZL5ZJskkOfwfW9QNQY4oFgjzd5niBN-kbk9SX83zRPpRYE0V4UWJkTwWCjRQ-zepmacj4Z0G4fCk1Iis1N6lj6xsXGdd1kRTgLyUxv3gOThLblAivmUbt7k299543hOq4&refresh_token=AQCNJlh52_vDXBEznReCsiwdvH6nVo_5GyfpdbSyf1iAjiaxPF1Ka8_z3S4ydnlfdKJnDZwiFQ8_O8NBGbSS6A2jwHsZq94OpeI3cMcKIospEZJvjfQAqpUhF7xReiFIBj0'
+// var TOKEN = getAccessToken().then((data) => data).catch((error) => console.log(error));
+var REFRESH_TOKEN = '';
 
-  request.post(authOptions, function(error, response, body) {
-    console.log(body.access_token);
-    res.send(body.access_token);
-  })
-})
 
-var TEMP_TOKEN = process.env.TEMP_TOKEN || 'BQAyzDFCIgqYWimLvlfIZBlgeoJEK0ZL5ZJskkOfwfW9QNQY4oFgjzd5niBN-kbk9SX83zRPpRYE0V4UWJkTwWCjRQ-zepmacj4Z0G4fCk1Iis1N6lj6xsXGdd1kRTgLyUxv3gOThLblAivmUbt7k299543hOq4&refresh_token=AQCNJlh52_vDXBEznReCsiwdvH6nVo_5GyfpdbSyf1iAjiaxPF1Ka8_z3S4ydnlfdKJnDZwiFQ8_O8NBGbSS6A2jwHsZq94OpeI3cMcKIospEZJvjfQAqpUhF7xReiFIBj0'
-
-// var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
-var user_id = 'annagzh';
 app.get('/getplaylists', function(req, res) {
   const options = {
     url: `https://api.spotify.com/v1/users/${user_id}/playlists`,
     method: 'GET',
     headers: {
-      Authorization: 'Bearer ' + TEMP_TOKEN
+      // Authorization: 'Bearer ' + TOKEN + '&refresh_token=' + REFRESH_TOKEN
+      Authorization: 'Bearer ' + TOKEN
     }
   };
 
@@ -305,34 +237,10 @@ app.get('/getplaylists', function(req, res) {
   });
 })
 
-var getAllPlayList = (client_id, access_token) => {
-
-  return new Promise((resolve, reject) => {
-
-    const options = {
-      url: `https://api.spotify.com/v1/users/${user_id}/playlists`,
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + TEMP_TOKEN
-      }
-    };
-
-    request(options, function(err, res, body) {
-      if (err) {
-        reject(err);
-      } else {
-        let json = JSON.stringify(body);
-        resolve(json);
-      }
-    });
-
-  })
-};
-
 app.post('/spotify', function(req, res) {
 
-  var user_id = process.env.CLIENT_ID || 'wizzler'; // Your client id
-  var access_token = process.env.ACCESS_TOKEN || secret.TEMP_TOKEN;
+  var user_id = process.env.CLIENT_ID || 'greenfield8080'; // Your client id
+  var access_token = process.env.ACCESS_TOKEN || secret.TOKEN;
 
   getAllPlayList(user_id, access_token)
   .then((response) => {
