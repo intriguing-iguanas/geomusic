@@ -2,7 +2,11 @@ var mongoose = require('mongoose');
 
 // for development only: not for deployment
 // comment out before pull request:
-// var secret = require('../secret.js');
+try {
+  var secret = require('../secret.js');
+} catch (ex) {
+  console.log('');
+}
 
 // choose between env variables for Heroku or dev env
 var mongodb_user = process.env.MONGODB_USER || secret.MONGODB_USER;
