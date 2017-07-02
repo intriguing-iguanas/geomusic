@@ -70,35 +70,30 @@ class App extends React.Component {
 
   // set this.state.location
   var _this = this;
-  _this.getCurrentLocation(4);
+  _this.getCurrentLocation(null, function(lng, lat){
 
-  //fire retrievelocalplaylist function and set currentplaylist tag
-  var lng = -122.407087;
-  var lat = 37.783696;
+      setInterval(ajaxCall, 1000);
 
-   setInterval(function(){
-
-    if (_this.state.location.length > 0) {
-      lng = _this.state.location[0];
-      lat = _this.state.location[1];
-    };
-    $.ajax({
-      method: 'GET',
-      url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
-    })
-      .done(function(data) {
-      // redirects client to playlistURL
-      if (typeof data === 'string') {
-        _this.setState({
-          currentPlaylist: 'No Playlists within 1 mile'
+      function ajaxCall() {
+        $.ajax({
+          method: 'GET',
+          url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
         })
-      } else {
-        _this.setState({
-          currentPlaylist: data.playlistName
+        .done(function(data) {
+          // redirects client to playlistURL
+          if (typeof data === 'string') {
+            _this.setState({
+              currentPlaylist: 'No Playlists within 1 mile'
+            })
+          } else {
+            _this.setState({
+              currentPlaylist: data.playlistName
+            })
+          }
         })
       }
-    })
-  }, 1000)
+
+    });
 }
 
 
@@ -116,7 +111,7 @@ class App extends React.Component {
   }
 
 // get user's current location & call addtoDB
-  getCurrentLocation(playlist) {
+  getCurrentLocation(playlist, callback) {
     var context = this;
     var options = {
       enableHighAccuracy: true,
@@ -135,6 +130,7 @@ class App extends React.Component {
         if (playlist && !typeof playlist === 'number') {
             context.addtoDB(playlist)
         }
+        callback(crd.longitude, crd.latitude);
       })
     };
 
@@ -176,7 +172,7 @@ class App extends React.Component {
                       <Add addBtn={this.addBtn}/>
                       <Play playPlaylist={this.playPlaylist} getCurrentLocation={this.getCurrentLocation}/>
                     </div>
-                    <h2>{this.state.currentPlaylist}</h2>
+                    <h2>Your nearest playlist: {this.state.currentPlaylist}</h2>
                 </div>
     }
     return (<div>{ display }</div>)
