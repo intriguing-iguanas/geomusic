@@ -50,36 +50,53 @@ class App extends React.Component {
 
 
   playPlaylist(lng, lat) {
+
     $.ajax({
       method: 'GET',
       url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
     })
     .done(function(data) {
     // redirects client to playlistURL
-      window.location.assign(data.playlistUrl);
+      if (!data === 'none') {
+        window.location.assign(data.playlistUrl)
+      };
     })
 
   }
 
   componentDidMount () { 
-
-  //fire retrievelocalplaylist function and set currentplaylist tag
+  
+  // set this.state.location  
   var _this = this;
-  var lng = -122.408942;
+  _this.getCurrentLocation();
+    
+  //fire retrievelocalplaylist function and set currentplaylist tag
+  var lng = -122.407087;
   var lat = 37.783696;
 
   setInterval(function(){
+
+    if (_this.state.location.length > 0) {
+      lng = _this.state.location[0];
+      lat = _this.state.location[1];
+    };
     $.ajax({
       method: 'GET',
       url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
     })
       .done(function(data) {
       // redirects client to playlistURL
-      _this.setState({
-      currentPlaylist: data.playlistName
-      })      
+      if (typeof data === 'string') {
+        _this.setState({
+          currentPlaylist: 'No Playlists within 1 mile'
+        })     
+      } else {
+        _this.setState({
+          currentPlaylist: data.playlistName
+        })     
+      } 
     })
-  }, 3000)
+  }, 1000)
 }
 
 
@@ -104,10 +121,10 @@ class App extends React.Component {
       timeout: 5000,
       maximumAge: 0
     };
-
+    
     function success(pos) {
       var crd = pos.coords;
-
+      
       context.setState({
         location: [crd.longitude, crd.latitude]
       }, function() {
@@ -124,6 +141,9 @@ class App extends React.Component {
     };
 
     window.navigator.geolocation.getCurrentPosition(success, error, options);
+    context.setState({
+      showPlaylist: false
+    })
   }
 
 
