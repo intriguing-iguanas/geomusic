@@ -66,12 +66,12 @@ class App extends React.Component {
 
   }
 
-  componentDidMount () { 
-  
-  // set this.state.location  
+  componentDidMount () {
+
+  // set this.state.location
   var _this = this;
   _this.getCurrentLocation(4);
-    
+
   //fire retrievelocalplaylist function and set currentplaylist tag
   var lng = -122.407087;
   var lat = 37.783696;
@@ -91,12 +91,12 @@ class App extends React.Component {
       if (typeof data === 'string') {
         _this.setState({
           currentPlaylist: 'No Playlists within 1 mile'
-        })     
+        })
       } else {
         _this.setState({
           currentPlaylist: data.playlistName
-        })     
-      } 
+        })
+      }
     })
   }, 1000)
 }
@@ -133,8 +133,8 @@ class App extends React.Component {
         location: [crd.longitude, crd.latitude]
       }, function() {
         if (playlist && !typeof playlist === 'number') {
-            context.addtoDB(playlist)      
-        }  
+            context.addtoDB(playlist)
+        }
       })
     };
 
@@ -143,7 +143,7 @@ class App extends React.Component {
     };
 
     window.navigator.geolocation.getCurrentPosition(success, error, options);
-    
+
     if (playlist && typeof playlist === 'object') {
       context.setState({
       showPlaylist: false,

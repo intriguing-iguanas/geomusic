@@ -3,8 +3,11 @@ var db = require('../../database');
 module.exports = function (req, res) {
 
   var params = req.url.slice(21).split('=');
-  var lng = JSON.parse(params[0]);
-  var lat = JSON.parse(params[1]);
+  console.log('params', params);
+  if (params[0] !== 'undefined' && params[1] !== 'undefined') {
+    var lng = JSON.parse(params[0]);
+    var lat = JSON.parse(params[1]);
+  }
 
   db.getPinsWithinRadius(lng, lat, function(err, data){
     var closestPin = [];
