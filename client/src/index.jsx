@@ -57,9 +57,11 @@ class App extends React.Component {
     })
     .done(function(data) {
     // redirects client to playlistURL
-      if (!data === 'none') {
-        window.location.assign(data.playlistUrl)
-      };
+   // console.log('data', Object.keys(data), data['playlistUrl'])
+
+      //if (!data === 'none') {
+        window.location.assign(data['playlistUrl'])
+      //};
     })
 
   }
@@ -68,13 +70,13 @@ class App extends React.Component {
   
   // set this.state.location  
   var _this = this;
-  _this.getCurrentLocation();
+  _this.getCurrentLocation(4);
     
   //fire retrievelocalplaylist function and set currentplaylist tag
   var lng = -122.407087;
   var lat = 37.783696;
 
-  setInterval(function(){
+   setInterval(function(){
 
     if (_this.state.location.length > 0) {
       lng = _this.state.location[0];
@@ -121,18 +123,18 @@ class App extends React.Component {
       timeout: 5000,
       maximumAge: 0
     };
-    
+    if (playlist === undefined) {
+      context.playPlaylist(context.state.location[0], context.state.location[1])
+    }
+
     function success(pos) {
       var crd = pos.coords;
-      
       context.setState({
         location: [crd.longitude, crd.latitude]
       }, function() {
-        if (playlist) {
-          context.addtoDB(playlist)
-        } else {
-          context.playPlaylist(context.state.location[0], context.state.location[1])
-        }
+        if (playlist && !typeof playlist === 'number') {
+            context.addtoDB(playlist)      
+        }  
       })
     };
 
@@ -141,9 +143,14 @@ class App extends React.Component {
     };
 
     window.navigator.geolocation.getCurrentPosition(success, error, options);
-    context.setState({
-      showPlaylist: false
-    })
+    
+    if (playlist && typeof playlist === 'object') {
+      context.setState({
+      showPlaylist: false,
+      showInput: false
+      })
+      window.location.reload();
+    }
   }
 
 
