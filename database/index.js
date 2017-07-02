@@ -90,6 +90,11 @@ var getPinsWithinRadius = function(lng, lat, callback) {
 //     console.error(err);
 //   }
 // })
+// Pin.create({ location: { type: 'Point', coordinates: [ -122.3693841, 37.7289769 ] }, playlistUrl: 'http://open.spotify.com/user/annagzh/playlist/7yN5cnHWuhgVlpjGoEdcPA', playlistName: 'Bonfire' }, function(err) {
+//   if (err) {
+//     console.error(err);
+//   }
+// })
 
 module.exports.getPinsWithinRadius = getPinsWithinRadius;
 module.exports.selectAll = selectAll;
