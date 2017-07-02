@@ -25,7 +25,7 @@ class Playlist extends React.Component {
 
   render() {
     return (
-    <div id='fh5co-work'>
+    <div>
       <h4> Select a playlist for this location</h4>
       <div>
       { this.state.playlists.map(item => <PlaylistItem item={item} getCurrentLocation={this.props.getCurrentLocation} addtoDB={this.props.addtoDB} />)}
