@@ -50,36 +50,50 @@ class App extends React.Component {
 
 
   playPlaylist(lng, lat) {
+
     $.ajax({
       method: 'GET',
       url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
     })
     .done(function(data) {
     // redirects client to playlistURL
-      window.location.assign(data.playlistUrl);
+   // console.log('data', Object.keys(data), data['playlistUrl'])
+
+      //if (!data === 'none') {
+        window.location.assign(data['playlistUrl'])
+      //};
     })
 
   }
 
-  componentDidMount () { 
+  componentDidMount () {
 
-  //fire retrievelocalplaylist function and set currentplaylist tag
+  // set this.state.location
   var _this = this;
-  var lng = -122.408942;
-  var lat = 37.783696;
+  _this.getCurrentLocation(null, function(lng, lat){
 
-  setInterval(function(){
-    $.ajax({
-      method: 'GET',
-      url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
-    })
-      .done(function(data) {
-      // redirects client to playlistURL
-      _this.setState({
-      currentPlaylist: data.playlistName
-      })      
-    })
-  }, 3000)
+      setInterval(ajaxCall, 1000);
+
+      function ajaxCall() {
+        $.ajax({
+          method: 'GET',
+          url: '/sendClosestPlaylist' + '?' + JSON.stringify(lng) + '=' + JSON.stringify(lat)
+        })
+        .done(function(data) {
+          // redirects client to playlistURL
+          if (typeof data === 'string') {
+            _this.setState({
+              currentPlaylist: 'No Playlists within 1 mile'
+            })
+          } else {
+            _this.setState({
+              currentPlaylist: data.playlistName
+            })
+          }
+        })
+      }
+
+    });
 }
 
 
@@ -97,25 +111,26 @@ class App extends React.Component {
   }
 
 // get user's current location & call addtoDB
-  getCurrentLocation(playlist) {
+  getCurrentLocation(playlist, callback) {
     var context = this;
     var options = {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
     };
+    if (playlist === undefined) {
+      context.playPlaylist(context.state.location[0], context.state.location[1])
+    }
 
     function success(pos) {
       var crd = pos.coords;
-
       context.setState({
         location: [crd.longitude, crd.latitude]
       }, function() {
-        if (playlist) {
-          context.addtoDB(playlist)
-        } else {
-          context.playPlaylist(context.state.location[0], context.state.location[1])
+        if (playlist && !typeof playlist === 'number') {
+            context.addtoDB(playlist)
         }
+        callback(crd.longitude, crd.latitude);
       })
     };
 
@@ -124,6 +139,14 @@ class App extends React.Component {
     };
 
     window.navigator.geolocation.getCurrentPosition(success, error, options);
+
+    if (playlist && typeof playlist === 'object') {
+      context.setState({
+      showPlaylist: false,
+      showInput: false
+      })
+      window.location.reload();
+    }
   }
 
 
@@ -134,11 +157,11 @@ class App extends React.Component {
     //   display = <Login />
     // } else
     if (this.state.showInput) {
-      display =  <div>
+      display = <div>
                     <Input submitBtn={this.submitBtn} />
                 </div>
     } else if (this.state.showPlaylist) {
-      display = <div>
+      display = <div id="fh5co-work" data-section="work">
                   <Playlist getCurrentLocation={this.getCurrentLocation} addtoDB={this.addtoDB} username={this.state.username}/>
                 </div>
     } else {
@@ -149,11 +172,12 @@ class App extends React.Component {
                       <Add addBtn={this.addBtn}/>
                       <Play playPlaylist={this.playPlaylist} getCurrentLocation={this.getCurrentLocation}/>
                     </div>
-                    <h2>{this.state.currentPlaylist}</h2>
+                    <h2>Your nearest playlist: {this.state.currentPlaylist}</h2>
                 </div>
     }
     return (<div>{ display }</div>)
   }
 }
+
 
 ReactDOM.render(<App />, document.getElementById('app'));
