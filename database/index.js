@@ -1,4 +1,4 @@
-// var secret = require('../secret.js'); // comment out before pull request:
+var secret = require('../secret.js'); // comment out before pull request:
 var mongoose = require('mongoose');
 
 // choose between env variables for Heroku or dev env
