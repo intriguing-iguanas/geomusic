@@ -198,10 +198,62 @@
 
       var allMarkers = [];
       var currentPosition = {lat: 37.783333, lng: -122.416667};
+      var styles = [
+            {
+                "stylers": [
+                    {
+                        "hue": "#2c3e50"
+                    },
+                    {
+                        "saturation": 250
+                    }
+                ]
+            },
+            {
+                "featureType": "all",
+                "elementType": "labels.icon",
+                "stylers": [
+                  {
+                      "visibility": "off"
+                  }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "lightness": 50
+                    },
+                    {
+                        "visibility": "simplified"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            }
+        ];
+
 
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
-        center: currentPosition
+        center: currentPosition,
+        styles: styles
+      });
+
+      var userMarker = new google.maps.Marker({
+        position: new google.maps.LatLng(
+          37.783333, 
+          -122.416667
+        ),
+        map: map
       });
 
       function fetchMarkers (pos, cb) {
@@ -215,6 +267,7 @@
   
       function drawMarkers (markers) {
         markers.forEach(marker => {
+          console.log(marker);
           var gMarker = new google.maps.Marker({
             position: new google.maps.LatLng(
               marker.location.coordinates[1],
@@ -263,10 +316,12 @@
           navigator.geolocation.watchPosition(
             // On success, gets new position
             function(pos) {
-              map.panTo(new google.maps.LatLng(
+              var newPos = new google.maps.LatLng(
                 pos.coords.latitude,
                 pos.coords.longitude
-              ));
+              );
+              map.panTo(newPos);
+              userMarker.setPosition(newPos);
             },
             function(err) {
               console.error(`Error ${err.code}: ${err.message}`);
