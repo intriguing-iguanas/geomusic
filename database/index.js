@@ -40,7 +40,7 @@ var selectAll = function(callback) {
   });
 };
 
-// get a list of pins within 1000 miles:
+// get a list of pins within 50 miles:
 // (lng and lat are the longitude and latitude of the current location of a user)
 var getPinsWithinRadius = function(lng, lat, callback) {
   var milesToRadian = function(miles) {
