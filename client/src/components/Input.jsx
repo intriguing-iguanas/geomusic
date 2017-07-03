@@ -19,7 +19,7 @@ class Input extends React.Component {
   render() {
     return (
       <div>
-      <p>Your Spotify username:<input value={this.state.username} onChange={this.onUsernameChange} type="text" style={{color: "black"}}/></p>
+      <p>Your Spotify Username: <input value={this.state.username} onChange={this.onUsernameChange} type="text" className="form-control"/></p>
       <p><button type="button" onClick={() => { this.props.submitBtn(this.state.username) }} className="btn btn-info" >Submit</button></p>
       </div>
     )
