@@ -121,7 +121,9 @@ class App extends React.Component {
 
 // get user's current location & call addtoDB
   getCurrentLocation(playlist, callback) {
-    window.alert(`${JSON.stringify(playlist.name)} was added to current location!`)
+    if (playlist) {
+      window.alert(`${JSON.stringify(playlist.name)} was added to current location!`);
+    }
     var context = this;
     var options = {
       enableHighAccuracy: true,
