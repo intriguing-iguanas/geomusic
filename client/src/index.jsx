@@ -108,14 +108,24 @@ class App extends React.Component {
         playlistName: playlist.name
       }
     })
+    .done(function() {
+
+      context.setState({
+      showPlaylist: false,
+      showInput: false
+      })
+      window.location.reload();
+
+    })
   }
 
 // get user's current location & call addtoDB
   getCurrentLocation(playlist, callback) {
+    window.alert(`${JSON.stringify(playlist.name)} was added to current location!`)
     var context = this;
     var options = {
       enableHighAccuracy: true,
-      timeout: 5000,
+      // timeout: 100000,
       maximumAge: 0
     };
     if (playlist === undefined) {
@@ -127,10 +137,11 @@ class App extends React.Component {
       context.setState({
         location: [crd.longitude, crd.latitude]
       }, function() {
-        if (playlist && !typeof playlist === 'number') {
-            context.addtoDB(playlist)
+        if (playlist) {
+          context.addtoDB(playlist);
+        } else if (callback) {
+          callback(crd.longitude, crd.latitude);
         }
-        callback(crd.longitude, crd.latitude);
       })
     };
 
@@ -140,13 +151,7 @@ class App extends React.Component {
 
     window.navigator.geolocation.getCurrentPosition(success, error, options);
 
-    if (playlist && typeof playlist === 'object') {
-      context.setState({
-      showPlaylist: false,
-      showInput: false
-      })
-      window.location.reload();
-    }
+
   }
 
 
