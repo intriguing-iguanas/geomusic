@@ -40,7 +40,7 @@ var selectAll = function(callback) {
   });
 };
 
-// get a list of pins within 1 mile:
+// get a list of pins within 50 miles:
 // (lng and lat are the longitude and latitude of the current location of a user)
 var getPinsWithinRadius = function(lng, lat, callback) {
   var milesToRadian = function(miles) {
@@ -50,7 +50,7 @@ var getPinsWithinRadius = function(lng, lat, callback) {
   var query = {
     location : {
         $geoWithin : {
-            $centerSphere : [ [lng, lat], milesToRadian(1) ]
+            $centerSphere : [ [lng, lat], milesToRadian(50) ]
         }
     }
   };
@@ -90,7 +90,7 @@ var getPinsWithinRadius = function(lng, lat, callback) {
 //     console.error(err);
 //   }
 // })
-// Pin.create({ location: { type: 'Point', coordinates: [ -122.3693841, 37.7289769 ] }, playlistUrl: 'http://open.spotify.com/user/annagzh/playlist/7yN5cnHWuhgVlpjGoEdcPA', playlistName: 'Bonfire' }, function(err) {
+// Pin.create({ location: { type: 'Point', coordinates: [-122.473576, 37.684094] }, playlistUrl: 'http://open.spotify.com/user/annagzh/playlist/7yN5cnHWuhgVlpjGoEdcPA', playlistName: 'Daly City' }, function(err) {
 //   if (err) {
 //     console.error(err);
 //   }
