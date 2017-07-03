@@ -161,9 +161,9 @@ class App extends React.Component {
                     <Input submitBtn={this.submitBtn} />
                 </div>
     } else if (this.state.showPlaylist) {
-      display = <section id="fh5co-work" data-section="work">
+      display = <div id="fh5co-work" data-section="work">
                   <Playlist getCurrentLocation={this.getCurrentLocation} addtoDB={this.addtoDB} username={this.state.username}/>
-                </section>
+                </div>
     } else {
       display = <div>
                   <Map />
@@ -179,34 +179,5 @@ class App extends React.Component {
   }
 }
 
-
-//   render () {
-//     var display = null;
-
-//     // if (!this.state.loggedIn) {
-//     //   display = <Login />
-//     // } else
-//     if (this.state.showInput) {
-//       display = <div>
-//                     <Input submitBtn={this.submitBtn} />
-//                 </div>
-//     } else if (this.state.showPlaylist) {
-//       display = <section id="fh5co-work" data-section="work">
-//                   <Playlist getCurrentLocation={this.getCurrentLocation} addtoDB={this.addtoDB} username={this.state.username}/>
-//                 </section>
-//     } else {
-//       display = <div>
-//                   <Map />
-//                   <br></br>
-//                     <div className="btn-group" role="group">
-//                       <Add addBtn={this.addBtn}/>
-//                       <Play playPlaylist={this.playPlaylist} getCurrentLocation={this.getCurrentLocation}/>
-//                     </div>
-//                     <h2>Your nearest playlist: {this.state.currentPlaylist}</h2>
-//                 </div>
-//     }
-//     return (<div>{ display }</div>)
-//   }
-// }
 
 ReactDOM.render(<App />, document.getElementById('app'));
