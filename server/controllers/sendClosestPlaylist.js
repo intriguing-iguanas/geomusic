@@ -3,7 +3,6 @@ var db = require('../../database');
 module.exports = function (req, res) {
 
   var params = req.url.slice(21).split('=');
-  console.log('params', params);
   if (params[0] !== 'undefined' && params[1] !== 'undefined') {
     var lng = JSON.parse(params[0]);
     var lat = JSON.parse(params[1]);
