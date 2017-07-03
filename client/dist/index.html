@@ -90,7 +90,6 @@
         fetch(`/markers/@${pos.lat},${pos.lng}`)
           .then( res => res.json() )
           .then( markers => {
-            console.log(markers.length);
             cb(markers);
           });
       }
@@ -105,7 +104,6 @@
             map: map
           });
           allMarkers.push(gMarker);
-          console.log(gMarker);
         }) 
       }
 
