@@ -4,10 +4,10 @@
 
 ## Team
 
+  - Soo Park
   - Anna Zharkova
   - James Murphy
   - Joshua Broberg
-  - Soo Park
 
 ## Table of Contents
 
@@ -62,11 +62,6 @@ From within the root directory:
 ```sh
 npm install
 ```
-
-### Roadmap
-
-![alt text](roadmap.jpg)
-
 
 ## Contributing
 
